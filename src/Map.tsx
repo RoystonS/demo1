@@ -1,14 +1,66 @@
-import { useEffect, useState } from 'react';
-
-import styles from './App.module.scss';
+import { useEffect, useState, MutableRefObject, useRef } from 'react';
 
 import 'leaflet/dist/leaflet.css';
-import { Circle, MapContainer, Marker, Polygon, Popup, TileLayer } from 'react-leaflet';
-import { icon, LatLngLiteral } from 'leaflet';
+import { Circle, MapContainer, Marker, Polygon, Popup, TileLayer, useMap } from 'react-leaflet';
+import { icon, LatLngLiteral, Map as LeafletMap } from 'leaflet';
 
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import iconShadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+
+import { makeStyles, Button, Title1, tokens, shorthands } from '@fluentui/react-components';
+
+import {
+  bundleIcon,
+  iconFilledClassName,
+  iconRegularClassName,
+  Location24Filled,
+  Location24Regular,
+} from '@fluentui/react-icons';
+
+const useIconStyles = makeStyles({
+  icon: {
+    ':hover': {
+      [`& .${iconFilledClassName}`]: {
+        display: 'none',
+      },
+      [`& .${iconRegularClassName}`]: {
+        display: 'inline',
+      },
+    },
+  },
+});
+
+const LocationIcon = bundleIcon(Location24Filled, Location24Regular);
+
+const brandColors = {
+  backgroundColor: tokens.colorBrandBackground,
+  color: tokens.colorNeutralStrokeOnBrand,
+};
+
+const useStyles = makeStyles({
+  app: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  header: {
+    ...shorthands.flex('none'),
+    ...shorthands.padding(tokens.spacingHorizontalXS),
+    ...brandColors,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  map: {
+    ...shorthands.flex('auto'),
+  },
+  footer: {
+    ...shorthands.flex('none'),
+    ...shorthands.padding(tokens.spacingHorizontalXS),
+    ...brandColors,
+  },
+});
 
 const markerIcon = icon({
   iconUrl,
@@ -44,9 +96,37 @@ const polygon: LatLngLiteral[] = [
   },
 ];
 
+interface MapContentProps {
+  mapRef: MutableRefObject<LeafletMap | null>;
+}
+
+function MapContent({ mapRef }: MapContentProps) {
+  const map = useMap();
+
+  useEffect(() => {
+    mapRef.current = map;
+  }, [map, mapRef]);
+
+  return <></>;
+}
+
 function Map() {
   const [coords, setCoords] = useState<LatLongAndAccuracy | undefined>(undefined);
   const [geoError, setGeoError] = useState<GeolocationPositionError | undefined>(undefined);
+
+  const mapRef = useRef<LeafletMap>(null);
+
+  const styles = useStyles();
+  const iconStyles = useIconStyles();
+
+  function handleShowLocation() {
+    if (mapRef.current && coords) {
+      mapRef.current.flyTo([coords.lat, coords.lng], 14, {
+        animate: true,
+        duration: 2,
+      });
+    }
+  }
 
   useEffect(() => {
     const geo = navigator.geolocation;
@@ -72,7 +152,14 @@ function Map() {
 
   return (
     <div className={styles.app}>
-      <header>{geoError ? `Geospatial API error: ${geoError.message}` : 'Browser Geo Demo'}</header>
+      <header className={styles.header}>
+        <Title1>{geoError ? `Geospatial API error: ${geoError.message}` : 'Browser Geo Demo'}</Title1>
+        {coords ? (
+          <Button className={iconStyles.icon} onClick={handleShowLocation}>
+            <LocationIcon /> Show my location
+          </Button>
+        ) : null}
+      </header>
       <MapContainer className={styles.map} center={[51.9813456, -0.2189784]} zoom={7} scrollWheelZoom={true}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -94,8 +181,12 @@ function Map() {
             <Circle center={coords} radius={coords.accuracy}></Circle>
           </>
         ) : null}
+
+        <MapContent mapRef={mapRef} />
       </MapContainer>
-      <footer>Map shows FA location + polygon and user's location with accuracy circle.</footer>
+      <footer className={styles.footer}>
+        Map shows FA location + polygon and user's location with accuracy circle.
+      </footer>
     </div>
   );
 }
