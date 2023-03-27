@@ -1,16 +1,19 @@
+import { useEffect, useState } from 'react';
+
 import styles from './App.module.scss';
+
 import 'leaflet/dist/leaflet.css';
 import { Circle, MapContainer, Marker, Polygon, Popup, TileLayer } from 'react-leaflet';
 import { icon, LatLngLiteral } from 'leaflet';
-import x from 'leaflet/dist/images/marker-icon.png';
-import y from 'leaflet/dist/images/marker-shadow.png';
-import z from 'leaflet/dist/images/marker-icon-2x.png';
-import { useEffect, useState } from 'react';
+
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import iconShadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 
 const markerIcon = icon({
-  iconUrl: x,
-  iconRetinaUrl: z,
-  shadowUrl: y,
+  iconUrl,
+  iconRetinaUrl,
+  shadowUrl: iconShadowUrl,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -41,7 +44,7 @@ const polygon: LatLngLiteral[] = [
   },
 ];
 
-function App() {
+function Map() {
   const [coords, setCoords] = useState<LatLongAndAccuracy | undefined>(undefined);
   const [geoError, setGeoError] = useState<GeolocationPositionError | undefined>(undefined);
 
@@ -97,4 +100,4 @@ function App() {
   );
 }
 
-export default App;
+export default Map;
