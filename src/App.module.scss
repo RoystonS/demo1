@@ -1,0 +1,22 @@
+.app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  header {
+    height: 2rem;
+    flex: none;
+  }
+
+  footer {
+    background: slategray;
+    height: 2rem;
+    flex: none;
+  }
+}
+
+.map {
+  background: green;
+
+  flex: auto;
+}
