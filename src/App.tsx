@@ -92,7 +92,7 @@ function App() {
           </>
         ) : null}
       </MapContainer>
-      <footer></footer>
+      <footer>Map shows FA location + polygon and user's location with accuracy circle.</footer>
     </div>
   );
 }
