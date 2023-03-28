@@ -8,7 +8,18 @@ import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import iconShadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 
-import { makeStyles, Button, Title1, tokens, shorthands } from '@fluentui/react-components';
+import {
+  makeStyles,
+  Button,
+  Title1,
+  tokens,
+  shorthands,
+  Menu,
+  MenuTrigger,
+  MenuPopover,
+  MenuList,
+  MenuItem,
+} from '@fluentui/react-components';
 
 import {
   bundleIcon,
@@ -17,6 +28,7 @@ import {
   Location24Filled,
   Location24Regular,
 } from '@fluentui/react-icons';
+import { AllThemes, useTheming } from './theming';
 
 const useIconStyles = makeStyles({
   icon: {
@@ -113,6 +125,7 @@ function MapContent({ mapRef }: MapContentProps) {
 function Map() {
   const [coords, setCoords] = useState<LatLongAndAccuracy | undefined>(undefined);
   const [geoError, setGeoError] = useState<GeolocationPositionError | undefined>(undefined);
+  const [_themeInfo, setThemeKey] = useTheming();
 
   const mapRef = useRef<LeafletMap>(null);
 
@@ -154,6 +167,22 @@ function Map() {
     <div className={styles.app}>
       <header className={styles.header}>
         <Title1>{geoError ? `Geospatial API error: ${geoError.message}` : 'Browser Geo Demo'}</Title1>
+        <Menu>
+          <MenuTrigger disableButtonEnhancement>
+            <Button>Set theme</Button>
+          </MenuTrigger>
+
+          <MenuPopover>
+            <MenuList>
+              {AllThemes.map((t, i) => (
+                <MenuItem key={i} onClick={() => setThemeKey(t.key)}>
+                  {t.name}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </MenuPopover>
+        </Menu>
+
         {coords ? (
           <Button className={iconStyles.icon} onClick={handleShowLocation}>
             <LocationIcon /> Show my location
