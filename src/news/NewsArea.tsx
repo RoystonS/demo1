@@ -40,7 +40,7 @@ function NewsArea() {
     <div>
       <Subtitle1>Latest News</Subtitle1>
       {newsArticles.map((article, i) => (
-        <NewsArticle title={article.title} message={article.message} />
+        <NewsArticle key={i} title={article.title} message={article.message} />
       ))}
     </div>
   );
