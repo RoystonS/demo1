@@ -18,7 +18,8 @@ import {
   MenuTrigger,
   MenuPopover,
   MenuList,
-  MenuItem,
+  MenuItemRadio,
+  MenuProps,
 } from '@fluentui/react-components';
 
 import {
@@ -28,7 +29,7 @@ import {
   Location24Filled,
   Location24Regular,
 } from '@fluentui/react-icons';
-import { AllThemes, useTheming } from './theming';
+import { AllThemes, ThemeKey, useTheming } from './theming';
 
 const useIconStyles = makeStyles({
   icon: {
@@ -163,11 +164,21 @@ function Map() {
     };
   }, []);
 
+  const onChange: MenuProps['onCheckedValueChange'] = (e, { name, checkedItems }) => {
+    setThemeKey(checkedItems[0] as ThemeKey);
+  };
+
+  const themeFormKey = 'theme';
+
+  const checkedValues = {
+    [themeFormKey]: [_themeInfo.key],
+  };
+
   return (
     <div className={styles.app}>
       <header className={styles.header}>
         <Title1>{geoError ? `Geospatial API error: ${geoError.message}` : 'Browser Geo Demo'}</Title1>
-        <Menu>
+        <Menu hasCheckmarks checkedValues={checkedValues} onCheckedValueChange={onChange}>
           <MenuTrigger disableButtonEnhancement>
             <Button>Set theme</Button>
           </MenuTrigger>
@@ -175,9 +186,9 @@ function Map() {
           <MenuPopover>
             <MenuList>
               {AllThemes.map((t, i) => (
-                <MenuItem key={i} onClick={() => setThemeKey(t.key)}>
+                <MenuItemRadio key={i} name={themeFormKey} value={t.key}>
                   {t.name}
-                </MenuItem>
+                </MenuItemRadio>
               ))}
             </MenuList>
           </MenuPopover>
