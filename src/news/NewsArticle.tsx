@@ -1,13 +1,4 @@
-import {
-  Body1,
-  Caption1,
-  Card,
-  CardHeader,
-  CardPreview,
-  makeStyles,
-  shorthands,
-  tokens,
-} from '@fluentui/react-components';
+import { Body1, Card, CardHeader, CardPreview, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 import { ClipboardTextLtr24Regular } from '@fluentui/react-icons';
 import Placeholder from '../common/Placeholder';
